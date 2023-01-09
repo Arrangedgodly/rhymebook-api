@@ -12,22 +12,22 @@ module.exports.getNotes = (req, res) => {
     .catch(() => returnDefaultError(res));
 };
 
-module.exports.createNote = (req, res) => {
-  Note.create({owner: req.user._id})
+module.exports.createNote = (req, res) => { 
+  Note.create({ owner: req.user._id})
     .then(note => res.send(note));
 };
 
 module.exports.getNote = (req, res) => {
-  const { id } = req.body;
-  Note.findOne({ id })
+  const { _id } = req.body;
+  Note.findOne({ _id })
     .then(note => res.send(note))
     .catch(() => returnDefaultError(res));
 }
 
 module.exports.patchNote = (req, res) => {
-  const { title, body, id } = req.body;
+  const { title, body, _id } = req.body;
   Note.findOneAndUpdate(
-    { id },
+    { _id },
     { title, body },
     { new: true, runValidators: true }
   )
@@ -36,8 +36,8 @@ module.exports.patchNote = (req, res) => {
 };
 
 module.exports.deleteNote = (req, res) => {
-  const { title } = req.body;
-  Note.findOne({ title })
+  const { _id } = req.body;
+  Note.findOne({ _id })
     .orFail()
     .then((note) => {
       if (note.owner === req.user._id) {
