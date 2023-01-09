@@ -4,13 +4,10 @@ const validator = require('validator');
 const noteSchema = new mongoose.Schema({
   title: {
     type: String,
-    minlength: 1,
-    maxlength: 100,
     required: true,
   },
   body: {
     type: String,
-    minlength: 1,
     required: true,
   },
   owner: {
