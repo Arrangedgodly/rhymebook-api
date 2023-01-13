@@ -4,8 +4,8 @@ const auth = require('../middlewares/auth');
 
 router.get('/', auth, getNotes);
 router.post('/', auth, createNote);
-router.get('/:id', auth, getNote);
-router.patch('/:id', auth, patchNote);
-router.delete('/:id', auth, deleteNote);
+router.get('/:_id', auth, getNote);
+router.patch('/:_id', auth, patchNote);
+router.delete('/:_id', auth, deleteNote);
 
 module.exports = router;
