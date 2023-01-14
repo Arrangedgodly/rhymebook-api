@@ -19,7 +19,7 @@ module.exports.createNote = (req, res) => {
 
 module.exports.getNote = (req, res) => {
   const { _id } = req.body;
-  Note.findOne({ _id })
+  Note.findById({ _id })
     .then(note => res.send(note))
     .catch(() => returnDefaultError(res));
 }
@@ -37,10 +37,10 @@ module.exports.patchNote = (req, res) => {
 
 module.exports.deleteNote = (req, res) => {
   const { _id } = req.body;
-  Note.findOne({ _id })
+  Note.findById({ _id })
     .orFail()
     .then((note) => {
-      if (note.owner === req.user._id) {
+      if (note.owner.equals(req.user._id)) {
         return note.remove(() => res.send(note));
       }
       return res.status(ERROR_CODES.PermissionsError).send({
