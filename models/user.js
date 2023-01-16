@@ -34,6 +34,49 @@ const userSchema = new mongoose.Schema({
     required: true,
     select: false,
   },
+  preferences: {
+    rhy: {
+      type: Boolean,
+      default: true
+    },
+    sdl: {
+      type: Boolean,
+      default: true
+    },
+    adj: {
+      type: Boolean,
+      default: true
+    },
+    noun: {
+      type: Boolean,
+      default: true
+    },
+    rlwd: {
+      type: Boolean,
+      default: true
+    },
+    syn: {
+      type: Boolean,
+      default: true
+    },
+    ant: {
+      type: Boolean,
+      default: true
+    },
+    fqfl: {
+      type: Boolean,
+      default: true
+    },
+    engine: {
+      type: String,
+      enum: ['topic', 'ml'],
+      default: 'topic'
+    },
+    max: {
+      type: Number,
+      default: 10
+    }
+  }
 });
 
 userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
