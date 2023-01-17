@@ -18,7 +18,7 @@ module.exports.createNote = (req, res) => {
 };
 
 module.exports.getNote = (req, res) => {
-  const { _id } = req.body;
+  const { _id } = req.params;
   Note.findById({ _id })
     .then(note => res.send(note))
     .catch(() => returnDefaultError(res));
