@@ -59,7 +59,7 @@ module.exports.patchCurrentUser = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, avatar, email, password } = req.body;
+  const { name, email, password } = req.body;
   User.findOne({ email }).then((user) => {
     if (user) {
       return res
@@ -69,7 +69,6 @@ module.exports.createUser = (req, res) => {
     return bcrypt.hash(password, 10).then((hash) =>
       User.create({
         name,
-        avatar,
         email,
         password: hash,
       })
@@ -77,7 +76,6 @@ module.exports.createUser = (req, res) => {
           res.send({
             name: newUser.name,
             email: newUser.email,
-            avatar: newUser.avatar,
           })
         )
         .catch((err) => {
