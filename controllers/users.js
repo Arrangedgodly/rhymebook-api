@@ -120,3 +120,15 @@ module.exports.patchPreferences = (req, res) => {
     .then(user => res.send(user))
     .catch(err => console.log(err))
 };
+
+module.exports.patchInfo = (req, res) => {
+  const {name, avatar, email } = req.body;
+
+  User.findByIdAndUpdate(
+    {_id: req.user._id},
+    {name, avatar, email},
+    { new: true, runValidators: true }
+  )
+    .then(user => res.send(user))
+    .catch(err => console.log(err))
+}
