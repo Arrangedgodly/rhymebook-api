@@ -7,6 +7,7 @@ const app = express();
 const userRouter = require('./routes/users');
 const noteRouter = require('./routes/notes');
 const { createUser, login } = require('./controllers/users');
+const { celebrate, Joi, Segments, errors } = require('celebrate');
 
 
 const { PORT = 3001, DATABASE = 'mongodb://localhost:27017/rhymebook_db' } = process.env;
@@ -22,13 +23,30 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
 app.use(cors());
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', celebrate({
+  [Segments.BODY]: Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().required()
+  })
+}), login);
+app.post('/signup', celebrate({
+  [Segments.BODY]: Joi.object().keys({
+    name: Joi.string().required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().required()
+  })
+}), createUser);
 
 app.use('/users', userRouter);
 
 app.use('/notes', noteRouter);
 
-app.use('*', (req, res) => {
-  res.status(404).send({ message: 'Requested resource not found' });
+app.use(errors());
+
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  console.error(err);
+  res.status(statusCode).send({
+    message: statusCode === 500 ? 'An error occurred on the server' : message,
+  });
 });

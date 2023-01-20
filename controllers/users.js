@@ -80,11 +80,9 @@ module.exports.createUser = (req, res) => {
         )
         .catch((err) => {
           if (err.name === "ValidationError")
-            return res
-              .status(ERROR_CODES.BadRequest)
-              .send({
-                message: "There is an error validating your POST request",
-              });
+            return res.status(ERROR_CODES.BadRequest).send({
+              message: "There is an error validating your POST request",
+            });
           return returnDefaultError(res);
         })
     );
@@ -101,11 +99,9 @@ module.exports.login = (req, res) => {
       });
     })
     .catch((err) => {
-      res
-        .status(ERROR_CODES.AuthorizationError)
-        .send({
-          message: `There was an error with the login request. Error: ${err.message}`,
-        });
+      res.status(ERROR_CODES.AuthorizationError).send({
+        message: `There was an error with the login request. Error: ${err.message}`,
+      });
     });
 };
 
@@ -117,18 +113,18 @@ module.exports.patchPreferences = (req, res) => {
     { preferences },
     { new: true, runValidators: true }
   )
-    .then(user => res.send(user))
-    .catch(err => console.log(err))
+    .then((user) => res.send(user))
+    .catch((err) => console.log(err));
 };
 
 module.exports.patchInfo = (req, res) => {
-  const {name, avatar, email } = req.body;
+  const { name, avatar, email } = req.body;
 
   User.findByIdAndUpdate(
-    {_id: req.user._id},
-    {name, avatar, email},
+    { _id: req.user._id },
+    { name, avatar, email },
     { new: true, runValidators: true }
   )
-    .then(user => res.send(user))
-    .catch(err => console.log(err))
-}
+    .then((user) => res.send(user))
+    .catch((err) => console.log(err));
+};
