@@ -25,7 +25,8 @@ module.exports.getNote = (req, res) => {
 }
 
 module.exports.patchNote = (req, res) => {
-  const { title, body, _id } = req.body;
+  const { title, body } = req.body;
+  const { _id } = req.params;
   Note.findOneAndUpdate(
     { _id },
     { title, body },
@@ -35,8 +36,31 @@ module.exports.patchNote = (req, res) => {
     .catch(() => returnDefaultError(res));
 };
 
+module.exports.addNoteTag = (req, res) => {
+  const { tag } = req.body;
+  const { _id } = req.params;
+  Note.findByIdAndUpdate(
+    { _id },
+    { $push: { tags: tag }},
+    { new: true, runValidators: true }
+  )
+    .then(note => res.send(note))
+    .catch(() => returnDefaultError(res));
+}
+
+module.exports.deleteNoteTag = (req, res) => {
+  const { _id, tag } = req.params;
+  Note.findByIdAndUpdate(
+    { _id },
+    { $pull: { tags: { _id: tag} }},
+    { new: true, runValidators: true }
+    )
+    .then(note => res.send(note))
+    .catch(() => returnDefaultError(res));
+}
+
 module.exports.deleteNote = (req, res) => {
-  const { _id } = req.body;
+  const { _id } = req.params;
   Note.findById({ _id })
     .orFail()
     .then((note) => {
