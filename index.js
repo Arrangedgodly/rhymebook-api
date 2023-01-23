@@ -10,6 +10,11 @@ const noteRouter = require('./routes/notes');
 const { createUser, login } = require('./controllers/users');
 const { celebrate, Joi, Segments, errors } = require('celebrate');
 
+const allowedOrigins = [
+  'https://rhymebook.graydonwasil.com',
+  'http://rhymebook.graydonwasil.com',
+  'http://localhost:3000'
+];
 
 const { PORT , DATABASE } = process.env;
 
@@ -19,10 +24,10 @@ app.listen(PORT, () => {
   console.log(`App listening at port ${PORT}`);
 });
 
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
-app.use(cors());
 
 app.post('/signin', celebrate({
   [Segments.BODY]: Joi.object().keys({
