@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -10,7 +11,7 @@ const { createUser, login } = require('./controllers/users');
 const { celebrate, Joi, Segments, errors } = require('celebrate');
 
 
-const { PORT = 3001, DATABASE = 'mongodb://localhost:27017/rhymebook_db' } = process.env;
+const { PORT , DATABASE } = process.env;
 
 mongoose.connect(DATABASE);
 
