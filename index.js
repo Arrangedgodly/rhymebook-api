@@ -24,7 +24,7 @@ app.listen(PORT, () => {
   console.log(`App listening at port ${PORT}`);
 });
 
-app.use(cors({ origin: '*' }));
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
