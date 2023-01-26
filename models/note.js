@@ -15,9 +15,11 @@ const tagSchema = new mongoose.Schema({
 const noteSchema = new mongoose.Schema({
   title: {
     type: String,
+    default: ''
   },
   body: {
     type: String,
+    default: ''
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,

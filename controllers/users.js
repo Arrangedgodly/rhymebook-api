@@ -1,39 +1,44 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const { ERROR_CODES } = require("../utils/errors");
 const { JWT_SECRET } = process.env;
+const NotFoundError = require("../errors/not-found-err");
+const BadRequestError = require("../errors/bad-request-err");
+const ExistingError = require("../errors/existing-err");
+const AuthError = require("../errors/auth-err");
 
-const returnDefaultError = (res) =>
-  res
-    .status(ERROR_CODES.DefaultError)
-    .send({ message: "An error has occurred on the server." });
-
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send(users))
-    .catch(() => returnDefaultError(res));
+    .then((users) => {
+      if (!users) {
+        return next(
+          new NotFoundError("There was a problem finding the requested users")
+        );
+      }
+      res.send(users);
+    })
+    .catch(next);
 };
 
-module.exports.getCurrentUser = (req, res) => {
+module.exports.getCurrentUser = (req, res, next) => {
   User.findById({ _id: req.user._id })
-    .orFail()
-    .then((user) => res.send(user))
-
-    .catch((err) => {
-      if (err.name === "DocumentNotFoundError")
-        return res
-          .status(ERROR_CODES.NotFound)
-          .send({ message: "User not found" });
-      if (err.name === "CastError")
-        return res
-          .status(ERROR_CODES.BadRequest)
-          .send({ message: "There was an error with the request" });
-      return returnDefaultError(res);
-    });
+    .orFail(() => {
+      return next(
+        new BadRequestError("There was a problem finding the requested user")
+      );
+    })
+    .then((user) => {
+      if (!user) {
+        return next(
+          new NotFoundError("There was a problem retreiving the requested user")
+        );
+      }
+      res.send(user);
+    })
+    .catch(next);
 };
 
-module.exports.patchCurrentUser = (req, res) => {
+module.exports.patchCurrentUser = (req, res, next) => {
   const { name, avatar } = req.body;
   User.findByIdAndUpdate(
     { _id: req.user._id },
@@ -43,28 +48,22 @@ module.exports.patchCurrentUser = (req, res) => {
     },
     { new: true, runValidators: true }
   )
-    .orFail()
+    .orFail(() => {
+      return next(
+        new BadRequestError("There was a problem updating the requested user")
+      );
+    })
     .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === "DocumentNotFoundError")
-        return res
-          .status(ERROR_CODES.NotFound)
-          .send({ message: "User not found" });
-      if (err.name === "CastError" || err.name === "ValidationError")
-        return res
-          .status(ERROR_CODES.BadRequest)
-          .send({ message: "There was an error with the request" });
-      return returnDefaultError(res);
-    });
+    .catch(next);
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const { name, email, password } = req.body;
   User.findOne({ email }).then((user) => {
     if (user) {
-      return res
-        .status(ERROR_CODES.ExistingError)
-        .send({ message: "There is already an existing user with this email" });
+      return next(
+        new ExistingError("There is already a user existing with this email")
+      );
     }
     return bcrypt.hash(password, 10).then((hash) =>
       User.create({
@@ -73,39 +72,35 @@ module.exports.createUser = (req, res) => {
         password: hash,
       })
         .then((newUser) =>
-          res.send({
+          {if (!newUser) {
+            return next(new BadRequestError("There was an error creating the new User"))
+          }
+          return res.send({
             name: newUser.name,
             email: newUser.email,
-          })
+          })}
         )
-        .catch((err) => {
-          if (err.name === "ValidationError")
-            return res.status(ERROR_CODES.BadRequest).send({
-              message: "There is an error validating your POST request",
-            });
-          return returnDefaultError(res);
-        })
+        .catch(next)
     );
   });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      res.send({
+      if (!user) {
+        return next(new AuthError("Wrong username or password"));
+      }
+      return res.send({
         token: jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: "7d" }),
       });
     })
-    .catch((err) => {
-      res.status(ERROR_CODES.AuthorizationError).send({
-        message: `There was an error with the login request. Error: ${err.message}`,
-      });
-    });
+    .catch(next);
 };
 
-module.exports.patchPreferences = (req, res) => {
+module.exports.patchPreferences = (req, res, next) => {
   const { preferences } = req.body;
 
   User.findByIdAndUpdate(
@@ -113,11 +108,16 @@ module.exports.patchPreferences = (req, res) => {
     { preferences },
     { new: true, runValidators: true }
   )
+    .orFail(() => {
+      return next(
+        new BadRequestError("There was an error patching the user preferences")
+      );
+    })
     .then((user) => res.send(user))
-    .catch((err) => console.log(err));
+    .catch(next);
 };
 
-module.exports.patchInfo = (req, res) => {
+module.exports.patchInfo = (req, res, next) => {
   const { name, avatar, email } = req.body;
 
   User.findByIdAndUpdate(
@@ -125,6 +125,11 @@ module.exports.patchInfo = (req, res) => {
     { name, avatar, email },
     { new: true, runValidators: true }
   )
+    .orFail(() => {
+      return next(
+        new BadRequestError("There was an error patching the user info")
+      );
+    })
     .then((user) => res.send(user))
-    .catch((err) => console.log(err));
+    .catch(next);
 };

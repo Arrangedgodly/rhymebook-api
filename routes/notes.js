@@ -59,7 +59,7 @@ router.patch(
       })
       .options({ allowUnknown: true }),
     [Segments.BODY]: Joi.object().keys({
-      title: Joi.string(),
+      title: Joi.string().empty(''),
       body: Joi.string(),
     }),
     [Segments.PARAMS]: Joi.object().keys({
