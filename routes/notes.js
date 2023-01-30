@@ -7,6 +7,8 @@ const {
   patchNote,
   addNoteTag,
   deleteNoteTag,
+  postNotePin,
+  deleteNotePin
 } = require("../controllers/notes");
 const auth = require("../middlewares/auth");
 const { celebrate, Joi, Segments } = require("celebrate");
@@ -121,5 +123,7 @@ router.delete(
   auth,
   deleteNoteTag
 );
+router.post('/:_id/pin', auth, postNotePin);
+router.delete('/:_id/pin', auth, deleteNotePin);
 
 module.exports = router;

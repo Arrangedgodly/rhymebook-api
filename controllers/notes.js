@@ -95,3 +95,25 @@ module.exports.deleteNote = (req, res, next) => {
     })
     .catch(next);
 };
+
+module.exports.postNotePin = (req, res, next) => {
+  const { _id } = req.params;
+  Note.findByIdAndUpdate(
+    { _id },
+    { pinned: true },
+    { new: true, runValidators: true }
+  )
+    .orFail()
+    .then(note => res.send(note))
+}
+
+module.exports.deleteNotePin = (req, res, next) => {
+  const { _id } = req.params;
+  Note.findByIdAndUpdate(
+    { _id },
+    { pinned: false },
+    { new: true, runValidators: true }
+  )
+    .orFail()
+    .then(note => res.send(note))
+}

@@ -28,6 +28,10 @@ const noteSchema = new mongoose.Schema({
   },
   tags: {
     type: [tagSchema]
+  },
+  pinned: {
+    type: Boolean,
+    default: false
   }
 });
 
