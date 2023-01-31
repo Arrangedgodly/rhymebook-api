@@ -32,6 +32,13 @@ const noteSchema = new mongoose.Schema({
   pinned: {
     type: Boolean,
     default: false
+  },
+  created: {
+    type: Date,
+    default: new Date()
+  },
+  lastEdited: {
+    type: Date
   }
 });
 

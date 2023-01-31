@@ -48,7 +48,7 @@ module.exports.patchNote = (req, res, next) => {
       if (note.owner.equals(req.user._id)) {
         Note.findOneAndUpdate(
           { _id },
-          { title, body },
+          { title, body, lastEdited: new Date() },
           { new: true, runValidators: true }
         ).then(updatedNote => {return res.send(updatedNote)})
       } else {
