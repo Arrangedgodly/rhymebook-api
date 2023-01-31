@@ -13,7 +13,7 @@ module.exports.getNotes = (req, res, next) => {
 };
 
 module.exports.createNote = (req, res, next) => {
-  Note.create({ owner: req.user._id })
+  Note.create({ owner: req.user._id, created: new Date() })
     .then((note) => {
       if (!note) {
         return next(new BadRequestError('There was an error creating the new note'))
