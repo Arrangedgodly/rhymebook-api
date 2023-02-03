@@ -105,6 +105,7 @@ module.exports.postNotePin = (req, res, next) => {
   )
     .orFail()
     .then(note => res.send(note))
+    .catch(next);
 }
 
 module.exports.deleteNotePin = (req, res, next) => {
@@ -116,4 +117,5 @@ module.exports.deleteNotePin = (req, res, next) => {
   )
     .orFail()
     .then(note => res.send(note))
+    .catch(next);
 }

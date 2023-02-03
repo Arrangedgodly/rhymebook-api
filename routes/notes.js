@@ -8,7 +8,7 @@ const {
   addNoteTag,
   deleteNoteTag,
   postNotePin,
-  deleteNotePin
+  deleteNotePin,
 } = require("../controllers/notes");
 const auth = require("../middlewares/auth");
 const { celebrate, Joi, Segments } = require("celebrate");
@@ -61,7 +61,7 @@ router.patch(
       })
       .options({ allowUnknown: true }),
     [Segments.BODY]: Joi.object().keys({
-      title: Joi.string().empty(''),
+      title: Joi.string().empty(""),
       body: Joi.string(),
     }),
     [Segments.PARAMS]: Joi.object().keys({
@@ -123,7 +123,35 @@ router.delete(
   auth,
   deleteNoteTag
 );
-router.post('/:_id/pin', auth, postNotePin);
-router.delete('/:_id/pin', auth, deleteNotePin);
+router.post(
+  "/:_id/pin",
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required(),
+      })
+      .options({ allowUnknown: true }),
+    [Segments.PARAMS]: Joi.object().keys({
+      _id: Joi.string().required(),
+    }),
+  }),
+  auth,
+  postNotePin
+);
+router.delete(
+  "/:_id/pin",
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required(),
+      })
+      .options({ allowUnknown: true }),
+    [Segments.PARAMS]: Joi.object().keys({
+      _id: Joi.string().required(),
+    }),
+  }),
+  auth,
+  deleteNotePin
+);
 
 module.exports = router;
