@@ -27,10 +27,21 @@ The backend for the Rhymebook web application, developed by Grady Wasil.
             * requires name, avatar, and email in the request body
     * #### Notes
         - GET at '/notes/'
+          * returns all of the note's in the current user's database
         - POST at '/notes/'
+          * creates / returns a new note in the database
         - GET at '/notes/:_id'
+          * returns note data
         - PATCH at '/notes/:_id'
+          * takes title and body in the request body
         - DELETE at '/notes/:_id'
+          * deletes the requested note from the database
+        - POST at '/notes/:_id/tags'
+          * requires tag in the request body
+        - DELETE at '/notes/:_id/tags/:tag'
+          * removes the tag from the database
+        - POST at '/notes/:_id/pin'
+        - DELETE at '/notes/:_id/pin'
 
 ## Link to the project
-This API can be found live at []()
+This API can be found live at [Rhymebook API](api.rhymebook.graydonwasil.com)

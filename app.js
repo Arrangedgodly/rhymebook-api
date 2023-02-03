@@ -9,6 +9,7 @@ const userRouter = require('./routes/users');
 const noteRouter = require('./routes/notes');
 const { createUser, login } = require('./controllers/users');
 const { celebrate, Joi, Segments, errors } = require('celebrate');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const allowedOrigins = [
   'https://rhymebook.graydonwasil.com',
@@ -29,6 +30,8 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
 
+app.use(requestLogger);
+
 app.post('/signin', celebrate({
   [Segments.BODY]: Joi.object().keys({
     email: Joi.string().email().required(),
@@ -46,6 +49,8 @@ app.post('/signup', celebrate({
 app.use('/users', userRouter);
 
 app.use('/notes', noteRouter);
+
+app.use(errorLogger);
 
 app.use(errors());
 
