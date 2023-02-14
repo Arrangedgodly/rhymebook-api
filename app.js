@@ -17,7 +17,7 @@ const allowedOrigins = [
   'http://localhost:3000'
 ];
 
-const { PORT , DATABASE } = process.env;
+const { PORT=3001 , DATABASE='mongodb://localhost:27017/rhymebook_db' } = process.env;
 
 mongoose.connect(DATABASE);
 
