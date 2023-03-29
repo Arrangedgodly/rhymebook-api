@@ -72,7 +72,7 @@ router.patch(
       .options({ allowUnknown: true }),
     [Segments.BODY]: Joi.object().keys({
       name: Joi.string().required(),
-      avatar: Joi.string().required(),
+      avatar: Joi.string(),
       email: Joi.string().email().required(),
     }),
   }),
